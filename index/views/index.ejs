@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Index</title>
+  <meta charset="utf-8">
+  <%- include('header.ejs') -%>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <%- include('navbar.ejs') -%>
+      <div class="container-fluid">
+        <% if (userData) {%>
+          <h1>Hello <%= userData['user_name'] %>
+          </h1>
+          <% } %>
+            <div class="row">
+              <div class="col-sm-4 statistics">
+
+                <div class="stat-name">Daily statistics</div>
+                <div>---------------------------------------------------</div>
+                <ul>                  
+                  <li>Registered user count:<p id="registered"><%= regCount %></p> </li>
+                  <li>Played matches count: <p id="playedgames"><%= playedgames %></p></li>
+                  <li>Wins count: <p id="wins"> <%= wins %></p> </li>
+                  <li>Lose count: <p id="loses"> <%= lost %></p></li>
+                  <li>Draw count:<p id="draws"> <%= draws %></p></li>                  
+                  <li>Hited ships count:<p id="hitedships"> <%= hitedships %></p></li>
+                </ul>
+              </div>          
+            </div>
+      </div>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,171 @@
+BODY {
+  /* background: black; */
+  color: #dddddd;
+  font-family: courier new;
+  text-align: center;
+  margin: 0;
+  padding-bottom: 3rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+}
+
+H1 {
+  text-align: center;
+  font-size: 14pt;
+  font-weight: normal;
+}
+
+BUTTON {
+  margin: 12px;
+}
+ul {
+  list-style: none;
+  word-wrap: break-word;
+}
+/* Chat */
+#form {
+  background: rgba(0, 0, 0, 0.15);
+  padding: 0.25rem;
+  position: relative;
+  background: yellow;
+  top: 110px;
+  align-content: center;
+  bottom: auto;
+  overflow: visible; 
+  width: 900px; 
+  margin: auto;
+  /* left: 830px; */
+  /* right: 830px; */
+  display: flex;
+  height: 3rem;
+  box-sizing: border-box;
+  backdrop-filter: blur(10px);
+}
+#input {
+  border: none;
+  padding: 0 1rem;
+  flex-grow: 1;
+  border-radius: 2rem;
+  margin: 0.25rem;
+}
+#input:focus {
+  outline: none;
+}
+#form > button {
+  background: #333;
+  border: none;
+  padding: 0 1rem;
+  margin: 0.25rem;
+  border-radius: 3px;
+  outline: none;
+  color: #fff;
+}
+
+#messages {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  font-size: medium;
+}
+#messages > li {
+  padding: 0.5rem 1rem;
+  text-align: left;
+}
+/* #messages > li-:nthchild(odd) { background: #efefef; } */
+.chatArea {
+  position: relative;
+  bottom: auto;
+  align-content: center;
+  top: 120px;
+  border: 13px solid;
+  width: 900px;
+  height: 200px;
+  overflow: auto;
+  margin: auto;
+}
+#time {
+  position: relative;
+  align-content: center;
+}
+.row {
+  position: relative;
+  align-content: center;
+  font-size: 30px;
+  font-weight: bolder;
+}
+
+/* Game */
+
+.water{
+   
+  background-image: url(pics/water.png);
+   
+  background-repeat: repeat;
+  -webkit-box-reflect: below 0px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.7, transparent), to(rgba(0,0,0,0.1)));
+}
+
+.ownMiss{
+background-image: url(pics/ownmiss.png); 
+background-repeat: no-repeat;
+background-size: 100% 100%;
+border-image-slice: 10% fill 7 12;
+}
+
+.ownHit{
+background-image: url(pics/ownhit.png);
+background-repeat: no-repeat;
+background-size: 100% 100%;
+border-image-slice: 10% fill 7 12;
+}
+
+.enemyMiss{
+background-image: url(pics/enemymiss.png); 
+background-repeat: no-repeat;
+background-size: 100% 100%;
+border-image-slice: 10% fill 7 12;
+}
+
+.enemyHit{
+background-image: url(pics/enemyhit.png); 
+background-repeat: no-repeat;
+background-size: 100% 100%;
+border-image-slice: 10% fill 7 12;
+
+}
+
+#table {
+  margin: auto;
+  position: relative;
+  
+}
+#enemyTable{
+  margin: auto;
+  position: relative;
+}
+
+#board{
+  margin: auto;
+  position: relative;
+  text-align: center;
+  font-size: large;
+  font-weight: bold;
+
+}
+
+#startbutton{
+  margin: auto;
+  width: 50%;
+  height: 10%;
+  background-color: #182218;
+  color: white;
+  font-size: 35px;
+  font-family: "Times New Roman", Times, serif;
+  border-radius: 10px;
+  border: none;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  position: relative;
+  left: 25%; 
+}

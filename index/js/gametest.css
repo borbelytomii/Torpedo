@@ -1,0 +1,84 @@
+#table {
+  margin: auto;
+}
+
+.water {
+  background-image: url(pics/water.png);
+
+  background-repeat: repeat;
+  -webkit-box-reflect: below 0px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.7, transparent), to(rgba(0, 0, 0, 0.1)));
+}
+
+.ownMiss {
+
+}
+
+.hit{
+  background-image: url(pics/hit.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  border-image-slice: 10% fill 7 12;
+}
+
+.miss{
+  background-image: url(pics/miss.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  border-image-slice: 10% fill 7 12;
+}
+
+.ships {
+  background-image: url(pics/ships.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  border-image-slice: 10% fill 7 12;
+}
+
+.ownHit {
+  background-image: url(pics/ownhit.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  border-image-slice: 10% fill 7 12;
+}
+
+.enemyMiss {
+
+}
+
+.enemyHit {
+  background-image: url(pics/enemyhit.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  border-image-slice: 10% fill 7 12;
+}
+
+#startbutton {
+  width: 50%;
+  height: 10%;
+  background-color: #182218;
+  color: white;
+  font-size: 35px;
+  font-family: "Times New Roman", Times, serif;
+  border-radius: 10px;
+  border: none;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  position: relative;
+  left: 25%;
+}
+
+/* bootstrap */
+
+.row {
+  position: relative;
+  align-content: center;
+  font-size: 30px;
+  font-weight: bolder;
+}
+
+#time {
+  position: relative;
+  align-content: center;
+}

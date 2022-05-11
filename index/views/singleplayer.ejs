@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<head>
+  <meta charset="utf-8">
+  <title>Torpedo</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <%- include('header.ejs') -%>
+    <link rel="stylesheet" href="js/torpedo.css">
+
+</head>
+  <body>
+    <%- include('navbar.ejs') -%>
+
+    <div class="container-fluid">
+    
+        <div class="row">
+          <div class="col-sm-4"  style="color:rgb(0, 0, 0);">
+            Score Points 
+              
+          </div>
+          <div class="col-sm-4" id= "time" style="color:rgb(182, 28, 28);">Time</div>
+          
+        </div>
+      </div>
+    
+  </body>
+</html>

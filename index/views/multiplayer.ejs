@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <head>
+    <meta charset="utf-8" />
+    <title>Torpedo multiplayer</title>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <link rel="stylesheet" href="js/gametest.css" />
+    
+    <script type="text/javascript">
+      let roomId = "<%= roomId %>";
+      var localUser = '<%- JSON.stringify(userData) %>';
+      console.log(JSON.parse(localUser));
+    </script>
+    <script src="../js/multiplayer.js"></script>
+    <%- include('header.ejs') -%>
+  </head>
+
+  <body>
+    <%- include('navbar.ejs') -%>
+
+    <h1></h1>
+
+    <!-- <% if (userData) {%>
+    <h1>hello <%= userData %></h1>
+  <% } %> -->
+
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-4" style="color: rgb(2, 17, 12)">
+          <p><%=roomId %> Joined Room</p>
+          <p>Score Points</p>
+          <div class="col-sm-4" id="player_name">
+            <%= playerName %>
+            
+          </div>
+          <div id="player_scores">0</div>
+          <div class="col-sm-4" id="enemy_name">
+            <%= enemyName %>
+            
+          </div>
+          <div id="enemy_scores">0</div>
+        </div>
+        <div class="col-sm-4" id="time" style="color: rgb(182, 28, 28)">
+          Time
+          <div id="timer">0:0</div>
+        </div>
+        <div class="col-sm-4" style="color: rgb(70, 70, 255)">
+          Viewers
+          <div class="col-sm-4" id="viewerc"><%= viewer %></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var chatusername = localUser.user_name; //user name
+    </script>
+
+    <!-- Game section -->
+
+    <script>
+      var gameStarted = false;
+      var aiscore = 0;
+      var irany = true;
+      var matrixSize = 5;
+      
+
+    </script>
+
+    <!--Gameboard -->
+    <div class="container-fluid" id="board">
+      <div class="row">
+        <div class="col-sm-4">
+          <div>
+            Own table
+          </div>
+          <table id="table" border="1"></table>
+        </div>
+        <div class="col-sm-4">
+          <div>
+            Enemy table
+          </div>
+          <table id="enemyTable" border="1"></table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm4">
+            <table id="ships" border="1"></table>
+          </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-4">
+          <button id="iranyButton" onclick="changeDirection(this)">
+            Horizontal
+          </button>
+          <button id="resetButton" onclick="reset();">Reset</button>
+          <button id="startbutton" onclick="call();">Ready</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat section -->
+
+    <div  style="
+    margin-top: 5%;
+    margin-left: 30%;
+    border-radius: 25px;
+    border: 20px solid #181f0f;
+    padding: 20px;
+    width: 30%;
+    height: 200px;
+    overflow: auto;"
+     class="chatArea">
+      <ul id="messages"></ul>
+      
+    
+  </div>
+  <div style="position: absolute;
+  margin-top: auto;
+  margin-left: 30%;
+  border-radius: 25px;
+  border: 20px solid #bd572a;
+  padding: 20px;
+  width: 30%;
+  height: auto;">
+    Chat message<input  style="
+    width: 300px;
+    height: 60px;
+    "
+     id="text"></input>
+    <button id="asddsa" 
+    style="padding: 20px;    
+    border-radius: 20px;
+    font-size: medium;"
+    onclick="sendBtnPressed();">Send</button>
+    </div>
+  </body>
+</html>

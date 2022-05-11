@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<head>
+  <meta charset="utf-8">
+  <title>Torpedo</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <link rel="stylesheet" href="js/index.css">
+  <%- include('header.ejs') -%>
+</head>
+
+<body>
+  <%- include('navbar.ejs') -%>
+
+    <div class="container">
+      <div class="col-sm-4">
+        <h1>Score Points</h1>
+        <td>
+          <div class="row" style="color:rgb(0, 0, 0);">All playedgames count:<p id="playedgames"><%= data.playedgames %></p></div>          
+          <div class="row" style="color:rgb(0, 0, 0);">All hits count:<p id="hitships"><%= data.hitships %></p></div>
+          <div class="row" style="color:rgb(0, 0, 0);">Match wins count:<p id="wingames"><%= data.win %></p></div>
+          <div class="row" style="color:rgb(0, 0, 0);">Match lost count:<p id="lostgames"><%= data.lose %></p></div>
+          <div class="row" style="color:rgb(0, 0, 0);">Singleplayer score:<p id="sp_score"><%= data.sp_score %></p></div>
+          <div class="row" style="color:rgb(0, 0, 0);">Singleplayer level:<p id="sp_level"><%= data.sp_level %></p></div>
+          <div class="row" style="color:rgb(0, 0, 0);">Multiplayer score:<p id="mp_score"><%= data.mp_score %></p></div>
+          <div class="row" style="color:rgb(0, 0, 0);">Multiplayer level:<p id="mp_level"><%= data.mp_level %></p></div>
+        </td>
+      </div>
+      <div class="col-sm-4">
+        <h1>Own data</h1>
+
+        <div class="row" id="email" style="color:rgb(0, 0, 0);">Email address: <%= userData['user_email'] %> </div>
+        <div class="row" style="color:rgb(0, 0, 0);">User name: <%=userData['user_name']  %></div>
+        <div class="field">
+          <form action="profile" id="registerform" method="post">
+          <label>New password</label><input type="password" id="log_password" name="log_password" required>
+          <div class="field">
+            <input type="submit" id="login" onclick="Popup()" value="Change password"></form>
+          </div>
+          <div> 
+            <form action="deleteUser" method="post">
+              <input type="submit" value="Delete account">
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+     <script>
+       function Popup() {
+          alert("A jelszó módosításra került!");
+        }
+     </script>
+</body>
+
+</html>

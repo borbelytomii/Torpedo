@@ -1,0 +1,8 @@
+FROM mysql:5
+
+ENV MYSQL_ROOT_PASSWORD asd123  
+ENV MYSQL_DATABASE game_database  
+ENV MYSQL_USER test  
+ENV MYSQL_PASSWORD jelszavasvagyok1234
+
+ADD initial.sql /docker-entrypoint-initdb.d

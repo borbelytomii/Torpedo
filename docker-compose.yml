@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  db:
+    build: 
+       context: .
+       dockerfile: db_build
+    image: mysql5
+    command: mysqld --sql_mode=""
+    ports:
+      - 3307:3306
+  
+  node:
+    build:
+      context: .
+      dockerfile: node_build
+    image: nodejs
+    user: "node"
+    depends_on:
+      - db
+    working_dir: /home/node/app
+    volumes:
+      - ./:/home/node/app
+      - /home/node/app/node_modules/
+    ports:
+      - 3000:3000
+    links:
+      - db
+    command: "npm start"

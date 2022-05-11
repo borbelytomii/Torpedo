@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Torpedo singleplayer</title>
+    <%- include('header.ejs') -%>
+    <link rel="stylesheet" href="js/gametest.css" />
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+
+
+
+  
+
+  <body>
+    <%- include('navbar.ejs') -%>
+
+    <!-- Scoreboard -->
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-4" id="scorep" style="color: rgb(0, 0, 0)">
+          Score Points
+          <div id="score">0</div>
+        </div>
+        <div class="col-sm-4" id="time" style="color: rgb(182, 28, 28)">
+          Time
+          <div id="timer">0:0</div>
+        </div>
+      </div>
+    </div>
+
+    <!--Gameboard -->
+
+    <div class="container-fluid" id="board">
+      <div class="row">
+        <div class="col-sm-4">
+          <div>
+            Own table
+          </div>
+          <table id="table" border="1"></table>
+        </div>
+        <div class="col-sm-4">
+          <div>
+            Enemy table
+          </div>
+          <table id="enemyTable" border="1"></table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm4">
+            <table id="ships" border="1"></table>
+          </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col-sm-4">
+          <button id="iranyButton" onclick="changeDirection(this)">
+            Horizontal
+          </button>
+          <button id="resetButton" onclick="reset();">Reset</button>
+          <button id="startbutton" onclick="call();">Start</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var gameStarted = false;
+      var aiscore = 0;
+      var irany = true;
+      var matrixSize = 5;
+      const socket = io();
+
+      var userData = JSON.parse('<%- JSON.stringify(userData) %>');
+
+      //console.log( "userdata a parseolas utan", userData);
+
+      var ships = {
+        cirkalo: {
+          hossz: 1,
+          darab: 3,
+          szin: "rgb(140, 140, 140)",
+        },
+        csatahajo: {
+          hossz: 2,
+          darab: 2,
+          szin: "rgb(40, 40, 40)",
+        },
+        anyahajo: {
+          hossz: 3,
+          darab: 1,
+          szin: "rgb(5, 5, 0)",
+        },
+      };
+
+      var pont = 0;
+      var fieldtype = {
+        hajo: 0,
+        viz: 1,
+        hit: 2,
+        miss: 3
+      };
+
+      var matrix = [];
+      var timerVariable;
+
+      function reset() {
+        renderEmptyMatrix(matrixSize);
+        renderShips();
+      }
+
+      function changeDirection(iranyButton) {
+        if (iranyButton.innerHTML == "Horizontal") {
+          iranyButton.innerHTML = "Vertical";
+          irany = false;
+        } else {
+          iranyButton.innerHTML = "Horizontal";
+          irany = true;
+        }
+      }
+
+      function allowDrop(ev) {
+        ev.preventDefault();
+      }
+
+      function drag(ev) {
+        ev.dataTransfer.setData("shipName", ev.target.classList[0]);
+        ev.dataTransfer.setData("shipId", ev.target.id);
+      }
+
+      function drop(ev) {
+        ev.preventDefault();
+        let selectedShip = ships[ev.dataTransfer.getData("shipName")];
+        // change divs in row
+        let table = document.querySelector("#table");
+        let pos = ev.target.getAttribute("name").split("_");
+        //!TODO egymásra pakolás 
+        if (matrixSize - (parseInt(pos[1]) + selectedShip.hossz) >= 0){
+        for (let i = 0; i < selectedShip.hossz; i++){
+          if(ev.target.classList.contains("ship")){
+            return;
+          }
+          if (irany)
+          {
+            if (document.querySelector("div[name='" + pos[0] + "_" + (parseInt(pos[1]) + i) + "']").classList.contains("ship")) {
+              return;
+            }
+          } else {
+            if (document
+                  .querySelector(
+                    "div[name='" + (parseInt(pos[0]) + i) + "_" + pos[1] + "']"
+                  )
+                  .classList.contains("ship")) {return;}
+          }
+               
+        }
+      }
+         
+        if (selectedShip.hossz == 1) {
+          // 1 hosszu hajonal csak az aktlis kockat valtoztatjuk
+          ev.target.classList.remove("water");
+          ev.target.classList.add("ship");
+          ev.target.style.backgroundColor = selectedShip.szin;
+        } else {
+          // ha hoszabb mint 1 akkor sorban a hossznyi diveket mind valtoztatjuk
+          if (irany) {
+            // vizszintes
+            if (matrixSize - (parseInt(pos[1]) + selectedShip.hossz) >= 0) {
+              for (let i = 0; i < selectedShip.hossz; i++) {
+                document.querySelector(
+                    "div[name='" + pos[0] + "_" + (parseInt(pos[1]) + i) + "']"
+                  ).classList.remove("water");
+
+                  document.querySelector(
+                    "div[name='" + pos[0] + "_" + (parseInt(pos[1]) + i) + "']"
+                  ).classList.add("ship");
+
+                document.querySelector(
+                  "div[name='" + pos[0] + "_" + (parseInt(pos[1]) + i) + "']"
+                ).style.backgroundColor = selectedShip.szin;
+              }
+            } else {
+              alert("Nincs eleg hely a táblán!");
+              return;
+            }
+          } else {
+            //fuggoleges
+            if (matrixSize - (parseInt(pos[0]) + selectedShip.hossz) >= 0) {
+              for (let i = 0; i < selectedShip.hossz; i++) {
+                document
+                  .querySelector(
+                    "div[name='" + (parseInt(pos[0]) + i) + "_" + pos[1] + "']"
+                  )
+                  .classList.remove("water");
+                
+                  document.querySelector(
+                    "div[name='" + (parseInt(pos[0]) + i) + "_" + pos[1] + "']"
+                  )
+                  .classList.add("ship");
+
+                document.querySelector(
+                  "div[name='" + (parseInt(pos[0]) + i) + "_" + pos[1] + "']"
+                ).style.backgroundColor = selectedShip.szin;
+              }
+            } else {
+              alert("Nincs eleg hely a táblán!");
+              return;
+            }
+          }
+        }
+
+        // eredeti hajo torlese a hajok matrixbol
+        let shipToDelete = document.querySelector(
+          "#" + ev.dataTransfer.getData("shipId")
+        );
+        shipToDelete.parentNode.removeChild(shipToDelete);
+      }
+
+      function renderEmptyMatrix(size) {
+        var table = document.querySelector("#table");
+
+        //clear matrix
+        table.querySelectorAll("*").forEach((n) => n.remove());
+
+        for (var i = 0; i < size; i++) {
+          var trElement = document.createElement("tr");
+          for (var j = 0; j < size; j++) {
+            var tdElement = document.createElement("td");
+            var divElement = document.createElement("div");
+            divElement.style.width = "100px";
+            divElement.style.height = "100px";
+            divElement.setAttribute("name", i + "_" + j);
+            divElement.setAttribute("onclick", "show(this);");
+            divElement.classList.add("water");
+            divElement.setAttribute("onDrop", "drop(event)");
+            divElement.setAttribute("onDragover", "allowDrop(event)");
+            tdElement.appendChild(divElement);
+            trElement.appendChild(tdElement);
+          }
+          table.appendChild(trElement);
+        }
+      }
+
+      function generateMatrix() {
+        var table = document.querySelector("#table");
+        let localMatrix = []
+
+        for (var i = 0, row; row = table.rows[i]; i++) {
+            let matrixRow = []
+            for (var j = 0, col; col = row.cells[j]; j++) {
+                if (col.children[0].classList.contains("water")) {
+                    matrixRow.push(fieldtype.viz);
+                } else if (col.children[0].classList.contains("ship")) {
+                    matrixRow.push(fieldtype.hajo);
+                } else {
+                    console.log("nem lehetett az adott mezo parsolni!!!!");
+                }
+            }
+            localMatrix.push(matrixRow);
+        }
+        console.log("matrix: " + localMatrix);
+        return localMatrix;
+      }
+
+      function renderShips() {
+        let table = document.getElementById("ships");
+
+        table.querySelectorAll("*").forEach((n) => n.remove());
+
+        for (let ship in ships) {
+          let selectedShip = ships[ship];
+          for (let db = 0; db < selectedShip.darab; db++) {
+            let tr = document.createElement("tr");
+            let td = document.createElement("td");
+            let outterDiv = document.createElement("div");
+            outterDiv.classList.add(ship);
+            outterDiv.setAttribute("draggable", "true");
+            outterDiv.setAttribute("ondragstart", "drag(event)");
+            outterDiv.id = ship + db;
+            for (let hossz = 0; hossz < selectedShip.hossz; hossz++) {
+              let div = document.createElement("div");
+              div.style.backgroundColor = selectedShip.szin;
+              div.style.border = "3px solid black";
+              div.style.boxShadow="0 0 10px black";
+              div.style.width = "100px";
+              div.style.height = "100px";
+              div.style.display = "inline-block";
+              div.style.borderRadius="100px 0px 100px 0px";
+              outterDiv.appendChild(div);
+            }
+            td.appendChild(outterDiv);
+            tr.appendChild(td);
+            table.appendChild(tr);
+          }
+        }
+      }
+
+      function call() {
+        // ellenorzes: osszes hajot elhelyezte-e
+        let allShipsPlaced = $('#ships td:not(:empty)').length===0;
+
+        if (allShipsPlaced){
+            clearInterval(timerVariable);
+            startPressed();
+        }
+
+        // timer();
+      }
+
+      function startPressed() {
+        socket.emit("gamestart", JSON.stringify(
+            {matrix:generateMatrix(),
+            size: matrixSize
+            }));
+        gameStarted = true;
+        $("#startbutton").hide();
+        $("#resetButton").hide();
+        $("#iranyButton").hide();
+        $('#enemyTable').show();
+        pont = 0;
+        document.getElementById("score").innerHTML = pont;
+        timer();
+      }
+
+
+      function renderMatrix(matrix, enemyMatrix) {
+        var table = document.querySelector("#table");
+        var enemytable = document.querySelector("#enemyTable");
+
+        //clear matrix
+        table.querySelectorAll("*").forEach((n) => n.remove());
+        enemytable.querySelectorAll("*").forEach((n) => n.remove());
+
+        for (var i = 0; i < matrix.length; i++) {
+          var trElement = document.createElement("tr");
+          for (var j = 0; j < matrix[i].length; j++) {
+            var tdElement = document.createElement("td");
+            var divElement = document.createElement("div");
+
+            divElement.style.width = "100px";
+            divElement.style.height = "100px";
+            divElement.setAttribute("name", i + "_" + j);
+            //divElement.setAttribute("onclick", "show(this);");
+            if (
+              matrix[i][j] == fieldtype.viz
+            ) {
+              //divElement.style.backgroundColor = 'blue';
+              divElement.classList.add("water");
+              //divElement.classList.add(overlay);
+            } else if (matrix[i][j] == fieldtype.miss) {
+              // player melle loves
+              divElement.classList.add("miss");
+              //divElement.style.backgroundColor = 'aqua';
+            } else if (matrix[i][j] == fieldtype.hit) {
+              // player talalat
+              // divElement.classList.remove('water');
+              divElement.classList.add("hit");
+
+              //divElement.style.backgroundColor = 'yellow';
+            } else if (matrix[i][j] == fieldtype.hajo) {
+              divElement.classList.add("ships");
+              //divElement.style.backgroundColor = "green";
+            }
+            tdElement.appendChild(divElement);
+            trElement.appendChild(tdElement);
+          }
+          table.appendChild(trElement);
+        }
+        // ezt rendereli az enemy matrixot vagyis a CPU matrixot
+        //console.log("enemyMatrix: " + enemyMatrix);
+        for (var i = 0; i < enemyMatrix.length; i++) {
+          var trElement = document.createElement("tr");
+          for (var j = 0; j < enemyMatrix[i].length; j++) {
+            var tdElement = document.createElement("td");
+            var divElement = document.createElement("div");
+
+            divElement.style.width = "100px";
+            divElement.style.height = "100px";
+            divElement.setAttribute("name", i + "_" + j);
+            divElement.setAttribute("class", "enemy_matrix");
+            divElement.setAttribute("onclick", "show(this);");
+            if (
+              enemyMatrix[i][j] == fieldtype.viz ||
+              enemyMatrix[i][j] == fieldtype.hajo
+            ) {
+              //divElement.style.backgroundColor = 'blue';
+              divElement.classList.add("water");
+              //divElement.classList.add(overlay);
+            } else if (enemyMatrix[i][j] == fieldtype.miss) {
+              // player melle loves
+              divElement.classList.add("miss");
+              //divElement.style.backgroundColor = 'aqua';
+            } else if (enemyMatrix[i][j] == fieldtype.hit) {
+              // player talalat
+              // divElement.classList.remove('water');
+              divElement.classList.add("hit");
+
+              //divElement.style.backgroundColor = 'yellow';
+            }
+            tdElement.appendChild(divElement);
+            trElement.appendChild(tdElement);
+          }
+          enemyTable.appendChild(trElement);
+        }
+      }
+
+      function show(x) {
+        if (gameStarted) {
+          var adat = x.getAttribute("name");
+          //console.log("pos:" + adat);
+          socket.emit("kuld", adat, aiscore);
+        }
+      }
+
+      function timer() {
+        var minutes = 20;
+        var seconds = 15;
+        timerVariable = setInterval(function () {
+          seconds--;
+          if (seconds < 0) {
+            minutes--;
+            seconds = 59;
+          }
+          if (minutes < 0) {
+            clearInterval(timerVariable);
+            socket.emit("timeExpired", JSON.stringify({
+              aiscore: aiscore,
+              score : score
+            }));
+          }
+
+          document.getElementById("timer").innerHTML =
+            minutes + "m " + seconds + "s ";
+        }, 1000);
+      }
+
+      renderEmptyMatrix(matrixSize);
+      renderShips();
+
+      //    Socket rész
+
+      socket.emit(
+        "connected",
+        JSON.stringify({
+          userData: userData,
+        })
+      );
+      socket.on("wrong", (Data) => {
+        alert(Data);
+      });
+
+      socket.on("gameover", (eredmeny) => {
+        gameStarted = false;
+        clearInterval(timerVariable);
+        $("#startbutton").show();
+        $("#resetButton").show();
+        $("#iranyButton").show();
+        $("#enemyTable").hide();
+        
+        alert(eredmeny);
+        reset();
+      });
+
+      socket.on("matrix", (matrix_) => {
+        //console.log(matrix_);
+        let data = JSON.parse(matrix_);
+        matrix = data.matrix;
+        enemyMatrix = data.enemyMatrix;
+        score = data.score;
+        aiscore = data.aiscore;
+        document.querySelector("#score").innerHTML = score;
+        renderMatrix(matrix, enemyMatrix);
+      });
+    </script>
+
+    <script src="./socket.io/socket.io.js"></script>
+    <!-- <script type="text/javascript" src="/game.js"></script> -->
+  </body>
+</html>

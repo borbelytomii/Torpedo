@@ -1,0 +1,12 @@
+FROM node:15
+USER node
+RUN mkdir -p /home/node/app
+WORKDIR /home/node/app
+
+USER node
+
+COPY package.json ./
+
+RUN npm install 
+
+EXPOSE 3000

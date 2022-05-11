@@ -1,0 +1,24 @@
+<!-- Navbar Setup -->
+<div class="mynavbar">
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Torpedo</a>
+        </div>
+        <ul class="nav navbar-nav">
+          <li <% if (page_name === 'home') { %>class="active" <% } %>><a href="/">Home</a></li>
+          <li <% if (page_name === 'singleplayer') { %>class="active" <% } %>><a href="singleplayer">Singleplayer</a></li>
+          <li <% if (page_name === 'multiplayer') { %>class="active" <% } %>><a href="multiplayer">Multiplayer</a></li>
+          <li <% if (page_name === 'profile') { %>class="active" <% } %>><a href="profile">Profile</a></li>   
+       
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <% if (userData) {%>
+            <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+          <% } else { %>
+            <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+            <% } %>
+        </ul>
+      </div>
+    </nav>
+  </div>
