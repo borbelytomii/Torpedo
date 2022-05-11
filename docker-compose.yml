@@ -6,7 +6,7 @@ services:
        context: .
        dockerfile: db_build
     image: mysql5
-    command: mysqld --sql_mode=""
+    command: --default-authentication-plugin=mysql_native_password --sql_mode=""
     ports:
       - 3307:3306
   
